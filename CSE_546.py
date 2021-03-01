@@ -12,18 +12,12 @@ sqs = boto3.resource('sqs')
 
 #image
 #png <->bites, add separate atribute for hash id
-def send_message(queue, image, message_attributes=None):
+def send_message(queue, image, hash_id, message_attributes=None):
 
-    if not message_attributes:
-	data = [{
-		    'Hash_Id': str(Hash_Id),
-		    'Array': msg['image'],
-
-		} 
-        
-        for Hash_Id, msg in enumerate(image)]
 	
-    response = queue.send_message(Entries=data)
+    response = queue.send_message(
+            Image=image,
+            Hash_Id=hash_id)
             
     return response
     
