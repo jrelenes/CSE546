@@ -45,7 +45,7 @@ def receive_messages(queue, max_number, wait_time):
             MaxNumberOfMessages=max_number,
             WaitTimeSeconds=wait_time
         )
-    for msg in images:
+    for index in images:
             #need to alter to images format in message labeled as message_id and body
             logger.info("Received message: %s: %s", msg.message_id, msg.body)
     
