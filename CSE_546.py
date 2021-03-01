@@ -10,7 +10,26 @@ logger = logging.getLogger(__name__)
 sqs = boto3.resource('sqs')
 
 
+#image
+#png <->bites, add separate atribute for hash id
+def send_message(queue, image, message_attributes=None):
+
+    if not message_attributes:
+	data = [{
+		    'Hash_Id': str(Hash_Id),
+		    'Array': msg['image'],
+
+		} 
+        
+        for Hash_Id, msg in enumerate(image)]
+	
+    response = queue.send_message(Entries=data)
+            
+    return response
+    
+#text
 def send_message(queue, message_body, message_attributes=None):
+
     
     if not message_attributes:
         message_attributes = {}
@@ -23,33 +42,9 @@ def send_message(queue, message_body, message_attributes=None):
     return response
 
 
-def send_messages(queue, images):
-    
-
-    	#need to change this to image format and send images as entries
-    	#break into small pieces to pass to server the format is binary
-        entries = [{
-            'Id': str(ind),
-            'MessageBody': msg['body'],
-            'MessageAttributes': msg['attributes']
-        } 
-        
-        
-        
-        
-        for ind, msg in enumerate(images)]
-        response = queue.send_messages(Entries=entries)
-        if 'Successful' in response:
-            for msg_meta in response['Successful']:
-                logger.info(
-                    "Message sent: %s: %s",
-                    msg_meta['MessageId'],
-                    images[int(msg_meta['Id'])]['body'])
-                    
-                    
-        return response
 
 def receive_messages(queue, max_number, wait_time):
+	
 
     images = queue.receive_messages(
             MessageAttributeNames=['All'],
@@ -62,7 +57,6 @@ def receive_messages(queue, max_number, wait_time):
     
     #returns images
     return images
-
 
 
 def main():
